@@ -1,0 +1,9 @@
+apply ajax, xhr on any project --> to update content
+    php , python , pure javascript  ((Don't use file system))
+
+
+2- implement long polling using anybackend technology to get data once updated form server
+
+
+lab deadline ---> TODAY --> No accepted execuses.
+back : 2 pm sharp
