@@ -15,6 +15,7 @@ def prepare_message(message_obj, clients):
     print(online_users)
     message = {"online":online_users}
     username = message_obj['name']
+    message['sender'] = username
     if 'login' in message_obj and message_obj['login']:
         message['content'] = f'{username} has been connected'
     elif 'body' in message_obj and message_obj['body']:
@@ -49,6 +50,7 @@ class ChatServer(WebSocket):
         self.__class__.clients.remove(self)
         online_users = list(map(lambda client: client.username, self.__class__.clients))
         message['online']= online_users
+        message['logout']=True
         self.__class__.send_message_to_all(json.dumps(message))
 
 

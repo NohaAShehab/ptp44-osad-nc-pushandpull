@@ -38,7 +38,13 @@ mywebsocket.onmessage = function (event) {
     // console.log('message received', event.data )
     message_content = JSON.parse(event.data)
     console.log(message_content)
-    content_div.innerHTML += `<h3>${message_content.content}</h3>`
+    if (message_content.logout){
+        content_div.innerHTML += `<div><h3 style="color: red" class="rounded">${message_content.content}</h3>  </div>`
+    }else if (message_content.sender == username) {
+        content_div.innerHTML += `<div style="direction: rtl;"><h4 class="d-inline-block w-auto rounded" style=" background: antiquewhite;">${message_content.content}</h4> </div>`
+    }else{
+        content_div.innerHTML += `<div> <h4 class="d-inline-block w-auto rounded" style="background: aquamarine;">${message_content.content}</h4> </div>`
+    }
 
     online_users = message_content.online
     onlineusers.innerHTML = ''
