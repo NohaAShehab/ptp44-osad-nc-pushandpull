@@ -7,28 +7,44 @@ def get_message_content(message):
     return message
 
 
+def prepare_message(message_obj):
+    print(message_obj)
+    message = {}
+    username = message_obj['name']
+    if 'login' in message_obj and message_obj['login']:
+        message = {"content": f'{username} has been connected'}
+    elif 'body' in message_obj and message_obj['body']:
+        message = {"content": f"{username}: {message_obj['body']}"}
+    #
+    data = json.dumps(message)
+    return data
+
+
 class ChatServer(WebSocket):
     clients = []
 
+    @classmethod
+    def send_message_to_all(cls, message):
+        for client in cls.clients:
+            client.send_message(message)
+
     def handle(self):  # this message is fired when I receive any message
-        # print(f"--> message received: {self.data}, {type(self.data)}")
-        # when I receive any message --> I need to read its connect
         received_message = get_message_content(self.data)
-        print(received_message)
-        # send it to all users
-        for client in self.__class__.clients:
-            client.send_message(f"{received_message['name']} has been connected".capitalize())
+        if 'login' in received_message:
+            self.username = received_message['name']
+        newmessage = prepare_message(received_message)
+        self.__class__.send_message_to_all(newmessage)
 
     def connected(self):
-        # this function will be called when client connected
         print(f"New client connected-> {self}")
-        # add connected client to the clients
         self.__class__.clients.append(self)
 
     def handle_close(self):
         print(self.address, 'closed')
-        # remove the client from the list
+        message=  {"content": f'{self.username} has been disconnected'}
         self.__class__.clients.remove(self)
+        self.__class__.send_message_to_all(json.dumps(message))
+
 
 
 if __name__ == '__main__':
